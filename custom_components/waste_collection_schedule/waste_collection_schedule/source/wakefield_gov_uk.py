@@ -57,7 +57,8 @@ class Source:
                                 collection.text.split(", ")[1].strip(), "%d %B %Y"
                             ).date()
                         )
-                    )
+                    except ValueError:
+                        pass
                 list_elements = section.find_all("li")
                 for element in list_elements:
                     entries.append(
