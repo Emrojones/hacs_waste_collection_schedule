@@ -44,14 +44,19 @@ class Source:
             request = sess.get(url, params={"uprn": {self._uprn}, "a": "Your Address"})
             soup = BeautifulSoup(request.content, "html.parser")
             collection_sections = soup.select(".tablet\\:l-col-fb-4.u-mt-10")
+            
             for section in collection_sections:
                 collection_dates = set()
                 bin_type = section.find("strong").text.split(" ")[0]
+                
+                # Only grab the previous and next collection dates
                 prev_and_next_collection = section.select(".u-mb-2")
+                
                 for collection in prev_and_next_collection:
                     if ", " not in collection.text:
                         continue
                     try:
+                        # Extract the date and add it to the collection dates set
                         collection_dates.add(
                             datetime.strptime(
                                 collection.text.split(", ")[1].strip(), "%d %B %Y"
@@ -59,15 +64,15 @@ class Source:
                         )
                     except ValueError:
                         pass
-                list_elements = section.find_all("li")
-                for element in list_elements:
+                
+                # Now create Collection objects only for the dates we collected
+                for collection_date in collection_dates:
                     entries.append(
                         Collection(
-                            date=datetime.strptime(
-                                element.text.split(", ")[1].strip(), "%d %B %Y"
-                            ).date(),
+                            date=collection_date,
                             t=TYPES[bin_type]["alias"],
                             icon=TYPES[bin_type]["icon"],
                         )
                     )
+
         return entries
