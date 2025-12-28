@@ -57,15 +57,6 @@ class Source:
                                 collection.text.split(", ")[1].strip(), "%d %B %Y"
                             ).date()
                         )
-                    except ValueError:
-                        pass
-                for collection_date in collection_dates:
-                    entries.append(
-                        Collection(
-                            date=collection_date,
-                            t=TYPES[bin_type]["alias"],
-                            icon=TYPES[bin_type]["icon"],
-                        )
                     )
                 list_elements = section.find_all("li")
                 for element in list_elements:
